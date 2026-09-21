@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Portafolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b1120;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(168, 85, 247, 0.15), transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.15), transparent 30%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 32px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: var(--accent-cyan);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .dynamic-row {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-btn {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+            border: 1px dashed var(--accent-cyan);
+            border-radius: 12px;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 600;
+            min-height: 24px;
+        }
+
+        .status.error {
+            color: #ef4444;
+        }
+
+        .status.success {
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Genera tu Portafolio</h1>
+        <form id="portfolioForm">
+            <!-- SECCIÓN DATOS BÁSICOS -->
+            <label for="nombre">Nombre Completo</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Ej: JhonMDeveloper">
+
+            <label for="profesion">Profesión</label>
+            <input type="text" id="profesion" name="profesion" required placeholder="Ej: Ingeniero de Sistemas">
+
+            <label for="resumen">Resumen Profesional</label>
+            <textarea id="resumen" name="resumen" required
+                placeholder="Diseñar sistemas escalables y eficientes."></textarea>
+
+            <label for="skills">Skills (separadas por coma)</label>
+            <input type="text" id="skills" name="skills" placeholder="React, Node.js, Python, Figma">
+
+            <!-- SECCIÓN PROYECTOS DINÁMICOS -->
+            <h2>Proyectos</h2>
+            <div id="proyectos-container"></div>
+            <button type="button" class="add-btn" onclick="addProyecto()">➕ Añadir Proyecto</button>
+
+            <!-- SECCIÓN LINKS DINÁMICOS -->
+            <h2>Links (Redes Sociales, GitHub, etc.)</h2>
+            <div id="links-container"></div>
+            <button type="button" class="add-btn" onclick="addLink()">➕ Añadir Link</button>
+
+            <button type="submit" id="submitBtn" class="submit-btn">Generar y Descargar Portafolio</button>
+            <div id="status" class="status"></div>
+        </form>
+    </div>
+
+    <script>
+        // Formulario
+        const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook-test/portafolio';
+
+        // --- Lógica para agregar Proyectos dinámicamente ---
+        function addProyecto() {
+            const container = document.getElementById('proyectos-container');
+            const row = document.createElement('div');
+            row.className = 'dynamic-row proyecto-row';
+            row.innerHTML = `
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">✖ Quitar</button>
+            <label>Título del Proyecto</label>
+            <input type="text" class="proyecto-titulo" required placeholder="Ej: Mi App de Notas">
+            
+            <label>Descripción</label>
+            <input type="text" class="proyecto-descripcion" required placeholder="Ej: Aplicación para gestionar notas con React.">
+            
+            <label>Enlace (URL)</label>
+            <input type="url" class="proyecto-link" required placeholder="https://github.com/mi-proyecto">
+        `;
+            container.appendChild(row);
+        }
+
+        // --- Lógica para agregar Links dinámicamente ---
+        function addLink() {
+            const container = document.getElementById('links-container');
+            const row = document.createElement('div');
+            row.className = 'dynamic-row link-row';
+            row.innerHTML = `
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">✖ Quitar</button>
+            <label>Texto del Enlace</label>
+            <input type="text" class="link-texto" required placeholder="Ej: Mi GitHub">
+            
+            <label>URL</label>
+            <input type="url" class="link-url" required placeholder="https://github.com/tu-usuario">
+        `;
+            container.appendChild(row);
+        }
+
+        // Inicializar con un proyecto y un link vacío para que el usuario vea cómo funciona
+        window.onload = () => {
+            addProyecto();
+            addLink();
+        };
+
+        // --- Lógica de envío del formulario ---
+        document.getElementById('portfolioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Generando...';
+            statusDiv.textContent = '';
+            statusDiv.className = 'status';
+
+            // 1. Recolectar datos básicos
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                profesion: document.getElementById('profesion').value,
+                resumen: document.getElementById('resumen').value,
+                skills: document.getElementById('skills').value
+            };
+
+            // 2. Transformar filas de Proyectos a Array JSON
+            const proyectosRows = document.querySelectorAll('.proyecto-row');
+            data.proyectos = Array.from(proyectosRows).map(row => ({
+                titulo: row.querySelector('.proyecto-titulo').value,
+                descripcion: row.querySelector('.proyecto-descripcion').value,
+                link: row.querySelector('.proyecto-link').value
+            }));
+
+            // 3. Transformar filas de Links a Array JSON
+            const linksRows = document.querySelectorAll('.link-row');
+            data.links = Array.from(linksRows).map(row => ({
+                texto: row.querySelector('.link-texto').value,
+                url: row.querySelector('.link-url').value
+            }));
+
+            // 4. Enviar a n8n
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data) // Enviamos el objeto completo con arrays reales
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error en el servidor al generar el portafolio.');
+                }
+
+                // Convertir la respuesta a un Blob (archivo binario)
+                const blob = await response.blob();
+
+                // Crear un enlace temporal para descargar el archivo
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'portafolio.zip';
+                document.body.appendChild(a);
+                a.click();
+
+                // Limpiar
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                statusDiv.textContent = '¡Portafolio generado y descargado con éxito!';
+                statusDiv.classList.add('success');
+
+            } catch (error) {
+                console.error(error);
+                statusDiv.textContent = 'Hubo un error. Revisa la consola o intenta de nuevo.';
+                statusDiv.classList.add('error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Generar y Descargar Portafolio';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
